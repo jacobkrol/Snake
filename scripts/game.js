@@ -3,14 +3,14 @@ window.onload = function() {
 	ctx = canv.getContext('2d');
 	setup();
 	const fps = 50;
-	setInterval(main, 1000/fps);
+	runtime = setInterval(main, 1000/fps);
 }
 
 class Snake {
 	constructor() {
 		this.pos = {x:10,y:12};
 		this.dir = 1; // 0 up, 1 right, 2 down, 3 left
-		this.moveDelay = 150;
+		this.moveDelay = 100;
 		this.lastMove = performance.now();
 		this.body = [[9,12],[8,12],[7,12],[6,12]];
 		this.size = 4;
@@ -18,11 +18,11 @@ class Snake {
 	move() {
 		if(performance.now() - this.lastMove >= this.moveDelay) {
 			//reset lastMove
-                        this.lastMove = performance.now();
+            this.lastMove = performance.now();
 
-                        //update body
+            //update body
 			this.body.unshift([this.pos.x,this.pos.y]);
-			this.body.pop();
+			while(this.body.length > this.size) this.body.pop();
 
 			//move head
 			switch(this.dir) {
@@ -47,28 +47,46 @@ class Snake {
 			if(this.pos.x >= board.width) this.pos.x -= board.width;
 			if(this.pos.x < 0) this.pos.x += board.width;
 
+			//check for food
+			if(this.pos.x === board.food.x && this.pos.y === board.food.y) {
+				this.size++;
+				board.food.x = Math.floor(Math.random()*board.width);
+				board.food.y = Math.floor(Math.random()*board.height);
+			}
+
+			//check for self-collisions
+			for(let pt of this.body) {
+				if(this.pos.x === pt[0] && this.pos.y === pt[1]) {
+					game_over();
+				}
+			}
+
 		}
 	}
 
 	show() {
-		ctx.fillStyle = "lime";
+		ctx.fillStyle = "white";
+		ctx.beginPath();
 		ctx.arc(board.scale*(this.pos.x+0.5),board.scale*(this.pos.y+0.5),board.scale*0.45,0,2*Math.PI);
 		ctx.fill();
+		ctx.closePath();
 
 		ctx.fillStyle = "white";
 		for(let pt of this.body) {
-			ctx.arc(board.scale*(this.body[0]+0.5),board.scale*(this.body[1]+0.5),board.scale*0.45,0,2*Math.PI);
+			ctx.beginPath();
+			ctx.arc(board.scale*(pt[0]+0.5),board.scale*(pt[1]+0.5),board.scale*0.45,0,2*Math.PI);
 			ctx.fill();
+			ctx.closePath();
 		}
 	}
 }
 
 class Board {
 	constructor() {
-		this.width = 24;
-		this.height = 32;
+		this.width = 15;
+		this.height = 20;
 		this.food = {x:5,y:5};
-		this.scale = 25;
+		this.scale = 50;
 	}
 
 	show() {
@@ -76,10 +94,19 @@ class Board {
 		ctx.fillStyle = "darkgray";
 		ctx.fillRect(0,0,canv.width,canv.height);
 
+		//draw score
+		ctx.fillStyle = "black";
+		ctx.font = "40pt Arial";
+		ctx.fillText(String(snake.size-4),20,50);
+
 		//draw food
 		ctx.fillStyle = "red";
+		ctx.beginPath();
 		ctx.arc(board.scale*(this.food.x+0.5),board.scale*(this.food.y+0.5),board.scale*0.3,0,2*Math.PI);
 		ctx.fill();
+		ctx.closePath();
+
+
 
 	}
 }
@@ -103,19 +130,19 @@ function handle_keydown(evt) {
 	switch(evt.keyCode) {
 		case 37:
 		 //left
-		 snake.dir = 3;
+		 if(snake.dir !== 1) snake.dir = 3;
 		 break;
 		case 38:
 		 //up
-		 snake.dir = 0;
+		 if(snake.dir !== 2) snake.dir = 0;
 		 break;
 		case 39:
 		 //right
-		 snake.dir = 1;
+		 if(snake.dir !== 3) snake.dir = 1;
 		 break;
 		case 40:
 		 //down
-		 snake.dir = 2;
+		 if(snake.dir !== 0) snake.dir = 2;
 		 break;
 		default:
 		 console.log("Invalid keypress");
@@ -123,9 +150,14 @@ function handle_keydown(evt) {
 	}
 }
 
+function game_over() {
+	clearInterval(runtime);
+	alert("Game Over!\nScore: "+String(snake.size-4));
+}
+
 function main() {
-	console.log("main");
 	compute();
 	draw();
 }
+
 
