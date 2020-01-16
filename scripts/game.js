@@ -49,12 +49,12 @@ class Snake {
 
 	show() {
 		ctx.fillStyle = "lime";
-		ctx.arc((this.pos.x+Math.ceil(board.scale/2))*board.scale,(this.pos.y+Math.ceil(board.scale/2))*board.scale,Math.floor(0.9*board.scale/2),0,2*Math.PI);
+		ctx.arc(board.scale*(this.pos.x+0.5),board.scale*(this.pos.y+0.5),board.scale*0.45,0,2*Math.PI);
 		ctx.fill();
 
 		ctx.fillStyle = "white";
 		for(let pt of this.body) {
-			ctx.arc(board.scale*(this.body[0]+Math.ceil(board.scale/2)),board.scale*(this.body[1]+Math.ceil(board.scale/2)),Math.floor(0.9*board.scale/2),0,2*Math.PI);
+			ctx.arc(board.scale*(this.body[0]+0.5),board.scale*(this.body[1]+0.5),board.scale*0.45,0,2*Math.PI);
 			ctx.fill();
 		}
 	}
@@ -75,7 +75,7 @@ class Board {
 
 		//draw food
 		ctx.fillStyle = "red";
-		ctx.arc(board.scale*(this.food.x+Math.ceil(this.scale/2)),board.scale*(this.food.y+Math.ceil(this.scale/2)),Math.floor(0.7*board.scale/2),0,2*Math.PI);
+		ctx.arc(board.scale*(this.food.x+0.5),board.scale*(this.food.y+0.5),board.scale*0.3,0,2*Math.PI);
 		ctx.fill();
 
 	}
