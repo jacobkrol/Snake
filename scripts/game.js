@@ -10,14 +10,17 @@ class Snake {
 	constructor() {
 		this.pos = {x:10,y:12};
 		this.dir = 1; // 0 up, 1 right, 2 down, 3 left
-		this.moveDelay = 10000;
+		this.moveDelay = 150;
 		this.lastMove = performance.now();
 		this.body = [[9,12],[8,12],[7,12],[6,12]];
 		this.size = 4;
 	}
 	move() {
 		if(performance.now() - this.lastMove >= this.moveDelay) {
-			//update body
+			//reset lastMove
+                        this.lastMove = performance.now();
+
+                        //update body
 			this.body.unshift([this.pos.x,this.pos.y]);
 			this.body.pop();
 
