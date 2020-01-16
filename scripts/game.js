@@ -10,17 +10,17 @@ class Snake {
 	constructor() {
 		this.pos = {x:10,y:12};
 		this.dir = 1; // 0 up, 1 right, 2 down, 3 left
-		this.moveDelay = 200;
+		this.moveDelay = 10000;
 		this.lastMove = performance.now();
 		this.body = [[9,12],[8,12],[7,12],[6,12]];
 		this.size = 4;
 	}
-	this.move = function() {
+	move() {
 		if(performance.now() - this.lastMove >= this.moveDelay) {
 			//update body
 			this.body.unshift([this.pos.x,this.pos.y]);
 			this.body.pop();
-			
+
 			//move head
 			switch(this.dir) {
 				case 0:
@@ -43,18 +43,18 @@ class Snake {
 			if(this.pos.y < 0) this.pos.y += board.height;
 			if(this.pos.x >= board.width) this.pos.x -= board.width;
 			if(this.pos.x < 0) this.pos.x += board.width;
-			
+
 		}
 	}
-	
-	this.show = function() {
+
+	show() {
 		ctx.fillStyle = "lime";
-		ctx.arc(this.pos.x+Math.ceil(board.scale/2),this.pos.y+Math.ceil(board.scale/2),Math.floor(0.9*board.scale/2),0,2*Math.PI);
+		ctx.arc((this.pos.x+Math.ceil(board.scale/2))*board.scale,(this.pos.y+Math.ceil(board.scale/2))*board.scale,Math.floor(0.9*board.scale/2),0,2*Math.PI);
 		ctx.fill();
-		
+
 		ctx.fillStyle = "white";
 		for(let pt of this.body) {
-			ctx.arc(this.body[0]+Math.ceil(board.scale/2),this.body[1]+Math.ceil(board.scale/2),Math.floor(0.9*board.scale/2),0,2*Math.PI);
+			ctx.arc(board.scale*(this.body[0]+Math.ceil(board.scale/2)),board.scale*(this.body[1]+Math.ceil(board.scale/2)),Math.floor(0.9*board.scale/2),0,2*Math.PI);
 			ctx.fill();
 		}
 	}
@@ -67,17 +67,17 @@ class Board {
 		this.food = {x:5,y:5};
 		this.scale = 25;
 	}
-	
-	this.show = function() {
+
+	show() {
 		//clear background
 		ctx.fillStyle = "darkgray";
 		ctx.fillRect(0,0,canv.width,canv.height);
-		
+
 		//draw food
 		ctx.fillStyle = "red";
-		ctx.arc(this.food.x+Math.ceil(this.scale/2),this.food.y+Math.ceil(this.scale/2),Math.floor(0.7*board.scale/2),0,2*Math.PI);
+		ctx.arc(board.scale*(this.food.x+Math.ceil(this.scale/2)),board.scale*(this.food.y+Math.ceil(this.scale/2)),Math.floor(0.7*board.scale/2),0,2*Math.PI);
 		ctx.fill();
-		
+
 	}
 }
 
@@ -121,6 +121,8 @@ function handle_keydown(evt) {
 }
 
 function main() {
+	console.log("main");
 	compute();
 	draw();
 }
+
