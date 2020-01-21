@@ -83,10 +83,10 @@ class Snake {
 
 class Board {
 	constructor() {
-		this.width = 15;
-		this.height = 20;
+		this.width = canv.height > canv.width ? 15 : Math.floor(15*canv.width/canv.height);
+		this.height = canv.height > canv.width ? Math.floor(15*canv.height/canv.width) : 15;
 		this.food = {x:5,y:5};
-		this.scale = 50;
+		this.scale = canv.height > canv.width ? canv.width/15 : canv.height/15;;
 	}
 
 	show() {
