@@ -50,8 +50,17 @@ class Snake {
 			//check for food
 			if(this.pos.x === board.food.x && this.pos.y === board.food.y) {
 				this.size++;
-				board.food.x = Math.floor(Math.random()*board.width);
-				board.food.y = Math.floor(Math.random()*board.height);
+				do {
+					board.food.x = Math.floor(Math.random()*board.width);
+					board.food.y = Math.floor(Math.random()*board.height);
+					let valid = true;
+					for(let b of this.body) {
+						if(b[0] === board.food.x && b[1] === board.food.y) {
+							valid = false;
+							break;
+						}
+					}
+				} while(valid);
 			}
 
 			//check for self-collisions
