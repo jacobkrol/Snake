@@ -1,6 +1,8 @@
 window.onload = function() {
 	canv = document.getElementById("gc");
 	ctx = canv.getContext('2d');
+	canv.height = window.innerHeight - 21;
+	canv.width = window.innerWidth - 21;
 	setup();
 	const fps = 50;
 	runtime = setInterval(main, 1000/fps);
@@ -42,25 +44,30 @@ class Snake {
 				 console.log("Invalid movement direction");
 				 break;
 			}
-			if(this.pos.y >= board.height) this.pos.y -= board.height;
-			if(this.pos.y < 0) this.pos.y += board.height;
-			if(this.pos.x >= board.width) this.pos.x -= board.width;
-			if(this.pos.x < 0) this.pos.x += board.width;
+
+			if(this.pos.y >= board.height-1 ||
+				this.pos.y < 1 ||
+		   		this.pos.x >= board.width-1 ||
+				this.pos.x < 1) game_over();
+
 
 			//check for food
 			if(this.pos.x === board.food.x && this.pos.y === board.food.y) {
 				this.size++;
+				let valid;
 				do {
-					board.food.x = Math.floor(Math.random()*board.width);
-					board.food.y = Math.floor(Math.random()*board.height);
-					let valid = true;
+					board.food.x = Math.floor(Math.random()*(board.width-2))+1;
+					board.food.y = Math.floor(Math.random()*(board.height-2))+1;
+					valid = true;
 					for(let b of this.body) {
 						if(b[0] === board.food.x && b[1] === board.food.y) {
+							console.log("on snake");
 							valid = false;
 							break;
 						}
 					}
-				} while(valid);
+					console.log(valid);
+				} while(!valid);
 			}
 
 			//check for self-collisions
@@ -92,10 +99,10 @@ class Snake {
 
 class Board {
 	constructor() {
-		this.width = canv.height > canv.width ? 15 : Math.floor(15*canv.width/canv.height);
-		this.height = canv.height > canv.width ? Math.floor(15*canv.height/canv.width) : 15;
+		this.width = canv.height > canv.width ? 17 : Math.floor(17*canv.width/canv.height);
+		this.height = canv.height > canv.width ? Math.floor(17*canv.height/canv.width) : 17;
 		this.food = {x:5,y:5};
-		this.scale = canv.height > canv.width ? canv.width/15 : canv.height/15;;
+		this.scale = canv.height > canv.width ? canv.width/17 : canv.height/17;
 	}
 
 	show() {
@@ -103,10 +110,15 @@ class Board {
 		ctx.fillStyle = "darkgray";
 		ctx.fillRect(0,0,canv.width,canv.height);
 
+		//add border
+		ctx.strokeStyle = "white";
+		ctx.lineWidth = this.scale/3;
+		ctx.strokeRect((2/3)*this.scale,(2/3)*this.scale,board.width*board.scale-(4/3)*this.scale,board.height*board.scale-(4/3)*this.scale);
+
 		//draw score
 		ctx.fillStyle = "black";
 		ctx.font = "40pt Arial";
-		ctx.fillText(String(snake.size-4),20,50);
+		ctx.fillText(String(snake.size-4),this.scale,this.scale*2-10);
 
 		//draw food
 		ctx.fillStyle = "red";
@@ -168,5 +180,3 @@ function main() {
 	compute();
 	draw();
 }
-
-
