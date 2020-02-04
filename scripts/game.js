@@ -179,7 +179,7 @@ function handle_keydown(evt) {
 
 function game_over() {
 	clearInterval(runtime);
-	alert("Game Over!\nScore: "+String(snake.size-4));
+	alert("Game Over!\nScore: "+String(snake.size-4)+"\nPress SPACE to restart");
 	snake.dead = true;
 }
 
