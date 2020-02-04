@@ -4,8 +4,6 @@ window.onload = function() {
 	canv.height = window.innerHeight - 21;
 	canv.width = window.innerWidth - 21;
 	setup();
-	const fps = 50;
-	runtime = setInterval(main, 1000/fps);
 }
 
 class Snake {
@@ -16,6 +14,7 @@ class Snake {
 		this.lastMove = performance.now();
 		this.body = [[9,12],[8,12],[7,12],[6,12]];
 		this.size = 4;
+		this.dead = false;
 	}
 	move() {
 		if(performance.now() - this.lastMove >= this.moveDelay) {
@@ -136,6 +135,8 @@ function setup() {
 	document.addEventListener('keydown', handle_keydown);
 	snake = new Snake();
 	board = new Board();
+	const fps = 50;
+	runtime = setInterval(main, 1000/fps);
 }
 
 function compute() {
@@ -165,8 +166,13 @@ function handle_keydown(evt) {
 		 //down
 		 if(snake.dir !== 0) snake.dir = 2;
 		 break;
+		case 32:
+		 //Space
+		 if(snake.dead) setup();
+		 console.log("restarting...");
+		 break;
 		default:
-		 console.log("Invalid keypress");
+		 console.log("Invalid keypress:",evt.keyCode);
 		 break;
 	}
 }
@@ -174,6 +180,7 @@ function handle_keydown(evt) {
 function game_over() {
 	clearInterval(runtime);
 	alert("Game Over!\nScore: "+String(snake.size-4));
+	snake.dead = true;
 }
 
 function main() {
